@@ -1,0 +1,294 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-injection: enabled
+  name: spring-petclinic
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+  namespace: spring-petclinic
+  labels:
+    app: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry
+  template:
+    metadata:
+      labels:
+        app: registry
+    spec:
+      containers:
+        - image: docker.io/registry:2.7
+          imagePullPolicy: Always
+          name: registry
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: registry
+#   namespace: spring-petclinic
+#   labels:
+#     app: registry
+# spec:
+#   ports:
+#     - port: 5000
+#       targetPort: 8080
+#   selector:
+#     app: registry
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: config
+#   namespace: spring-petclinic
+#   labels:
+#     app: config
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: config
+#   template:
+#     metadata:
+#       labels:
+#         app: config
+#     spec:
+#       containers:
+#         - image: spring-petclinic-config-server:2.5.1
+#           imagePullPolicy: Always
+#           name: config
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: config
+#   namespace: spring-petclinic
+#   labels:
+#     app: config
+# spec:
+#   ports:
+#     - port: 8880
+#   selector:
+#     app: config
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: discovery
+#   namespace: spring-petclinic
+#   labels:
+#     app: discovery
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: discovery
+#   template:
+#     metadata:
+#       labels:
+#         app: discovery
+#     spec:
+#       containers:
+#         - image: spring-petclinic-discovery-server:2.5.1
+#           imagePullPolicy: IfNotPresent
+#           name: discovery
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: discovery
+#   namespace: spring-petclinic
+#   labels:
+#     app: discovery
+# spec:
+#   ports:
+#     - port: 8760
+#   selector:
+#     app: discovery
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers
+  namespace: spring-petclinic
+  labels:
+    app: customers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customers
+  template:
+    metadata:
+      labels:
+        app: customers
+    spec:
+      containers:
+        - image: spring-petclinic-customers-service:2.5.1
+          imagePullPolicy: IfNotPresent
+          name: customers
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customers-service
+  namespace: spring-petclinic
+  labels:
+    app: customers
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: customers
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visits
+  namespace: spring-petclinic
+  labels:
+    app: visits
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: visits
+  template:
+    metadata:
+      labels:
+        app: visits
+    spec:
+      containers:
+        - image: spring-petclinic-visits-service:2.5.1
+          imagePullPolicy: IfNotPresent
+          name: visits
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: visits-service
+  namespace: spring-petclinic
+  labels:
+    app: visits
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: visits
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vets
+  namespace: spring-petclinic
+  labels:
+    app: vets
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vets
+  template:
+    metadata:
+      labels:
+        app: vets
+    spec:
+      containers:
+        - image: spring-petclinic-vets-service:2.5.1
+          imagePullPolicy: IfNotPresent
+          name: vets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vets-service
+  namespace: spring-petclinic
+  labels:
+    app: vets
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: vets
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin
+  namespace: spring-petclinic
+  labels:
+    app: admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+    spec:
+      containers:
+        - image: spring-petclinic-admin-server:2.5.1
+          imagePullPolicy: IfNotPresent
+          name: admin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin
+  namespace: spring-petclinic
+  labels:
+    app: admin
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: spring-petclinic
+  labels:
+    app: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - image: spring-petclinic-api-gateway:2.5.1
+          imagePullPolicy: IfNotPresent
+          name: gateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: spring-petclinic
+  labels:
+    app: gateway
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: gateway
